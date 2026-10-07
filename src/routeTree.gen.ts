@@ -10,33 +10,193 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AuthorsRouteImport } from './routes/authors'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as DraftsRouteImport } from './routes/drafts'
+import { Route as MediaRouteImport } from './routes/media'
+import { Route as PublishedRouteImport } from './routes/published'
+import { Route as ScheduledRouteImport } from './routes/scheduled'
+import { Route as SeoRouteImport } from './routes/seo'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TagsRouteImport } from './routes/tags'
+import { Route as PostsIndexRouteImport } from './routes/posts.index'
+import { Route as PostsNewRouteImport } from './routes/posts.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsRoute = AuthorsRouteImport.update({
+  id: '/authors',
+  path: '/authors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DraftsRoute = DraftsRouteImport.update({
+  id: '/drafts',
+  path: '/drafts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaRoute = MediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublishedRoute = PublishedRouteImport.update({
+  id: '/published',
+  path: '/published',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduledRoute = ScheduledRouteImport.update({
+  id: '/scheduled',
+  path: '/scheduled',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeoRoute = SeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsRoute = TagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsIndexRoute = PostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsNewRoute = PostsNewRouteImport.update({
+  id: '/posts/new',
+  path: '/posts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/authors': typeof AuthorsRoute
+  '/categories': typeof CategoriesRoute
+  '/drafts': typeof DraftsRoute
+  '/media': typeof MediaRoute
+  '/published': typeof PublishedRoute
+  '/scheduled': typeof ScheduledRoute
+  '/seo': typeof SeoRoute
+  '/settings': typeof SettingsRoute
+  '/tags': typeof TagsRoute
+  '/posts/new': typeof PostsNewRoute
+  '/posts/': typeof PostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/authors': typeof AuthorsRoute
+  '/categories': typeof CategoriesRoute
+  '/drafts': typeof DraftsRoute
+  '/media': typeof MediaRoute
+  '/published': typeof PublishedRoute
+  '/scheduled': typeof ScheduledRoute
+  '/seo': typeof SeoRoute
+  '/settings': typeof SettingsRoute
+  '/tags': typeof TagsRoute
+  '/posts/new': typeof PostsNewRoute
+  '/posts': typeof PostsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/authors': typeof AuthorsRoute
+  '/categories': typeof CategoriesRoute
+  '/drafts': typeof DraftsRoute
+  '/media': typeof MediaRoute
+  '/published': typeof PublishedRoute
+  '/scheduled': typeof ScheduledRoute
+  '/seo': typeof SeoRoute
+  '/settings': typeof SettingsRoute
+  '/tags': typeof TagsRoute
+  '/posts/new': typeof PostsNewRoute
+  '/posts/': typeof PostsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/authors'
+    | '/categories'
+    | '/drafts'
+    | '/media'
+    | '/published'
+    | '/scheduled'
+    | '/seo'
+    | '/settings'
+    | '/tags'
+    | '/posts/new'
+    | '/posts/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/analytics'
+    | '/authors'
+    | '/categories'
+    | '/drafts'
+    | '/media'
+    | '/published'
+    | '/scheduled'
+    | '/seo'
+    | '/settings'
+    | '/tags'
+    | '/posts/new'
+    | '/posts'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/authors'
+    | '/categories'
+    | '/drafts'
+    | '/media'
+    | '/published'
+    | '/scheduled'
+    | '/seo'
+    | '/settings'
+    | '/tags'
+    | '/posts/new'
+    | '/posts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  AuthorsRoute: typeof AuthorsRoute
+  CategoriesRoute: typeof CategoriesRoute
+  DraftsRoute: typeof DraftsRoute
+  MediaRoute: typeof MediaRoute
+  PublishedRoute: typeof PublishedRoute
+  ScheduledRoute: typeof ScheduledRoute
+  SeoRoute: typeof SeoRoute
+  SettingsRoute: typeof SettingsRoute
+  TagsRoute: typeof TagsRoute
+  PostsNewRoute: typeof PostsNewRoute
+  PostsIndexRoute: typeof PostsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +208,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors': {
+      id: '/authors'
+      path: '/authors'
+      fullPath: '/authors'
+      preLoaderRoute: typeof AuthorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drafts': {
+      id: '/drafts'
+      path: '/drafts'
+      fullPath: '/drafts'
+      preLoaderRoute: typeof DraftsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media': {
+      id: '/media'
+      path: '/media'
+      fullPath: '/media'
+      preLoaderRoute: typeof MediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/published': {
+      id: '/published'
+      path: '/published'
+      fullPath: '/published'
+      preLoaderRoute: typeof PublishedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scheduled': {
+      id: '/scheduled'
+      path: '/scheduled'
+      fullPath: '/scheduled'
+      preLoaderRoute: typeof ScheduledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seo': {
+      id: '/seo'
+      path: '/seo'
+      fullPath: '/seo'
+      preLoaderRoute: typeof SeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags': {
+      id: '/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/': {
+      id: '/posts/'
+      path: '/posts'
+      fullPath: '/posts/'
+      preLoaderRoute: typeof PostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/new': {
+      id: '/posts/new'
+      path: '/posts/new'
+      fullPath: '/posts/new'
+      preLoaderRoute: typeof PostsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  AuthorsRoute: AuthorsRoute,
+  CategoriesRoute: CategoriesRoute,
+  DraftsRoute: DraftsRoute,
+  MediaRoute: MediaRoute,
+  PublishedRoute: PublishedRoute,
+  ScheduledRoute: ScheduledRoute,
+  SeoRoute: SeoRoute,
+  SettingsRoute: SettingsRoute,
+  TagsRoute: TagsRoute,
+  PostsNewRoute: PostsNewRoute,
+  PostsIndexRoute: PostsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
