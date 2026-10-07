@@ -28,7 +28,7 @@ function Counter({ value }: { value: number }) {
   return <>{n.toLocaleString()}</>;
 }
 
-const traffic = ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"].map((m, i) => ({ m, v: [12, 18, 15, 24, 31, 29, 42][i] * 1000 }));
+const traffic = ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"].map((m, i) => ({ m, v: [12, 18, 15, 24, 31, 29, 42][i]! * 1000 }));
 
 function Dashboard() {
   const posts = usePosts();

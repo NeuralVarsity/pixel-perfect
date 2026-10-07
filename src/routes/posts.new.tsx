@@ -29,8 +29,8 @@ function Editor() {
   const [f, setF] = useState({
     title: existing?.title ?? "", slug: existing?.slug ?? "", metaTitle: existing?.metaTitle ?? "",
     metaDescription: existing?.metaDescription ?? "", keyword: existing?.keyword ?? "",
-    content: existing?.content ?? "", category: existing?.category ?? categories[0],
-    author: existing?.author ?? authors[0], tags: existing?.tags.join(", ") ?? "", schedule: "",
+    content: existing?.content ?? "", category: existing?.category ?? categories[0]!,
+    author: existing?.author ?? authors[0]!, tags: existing?.tags.join(", ") ?? "", schedule: "",
   });
   const [image, setImage] = useState<string | null>(existing?.image ?? null);
   const [drag, setDrag] = useState(false);
@@ -38,7 +38,7 @@ function Editor() {
 
   const load = (file?: File) => {
     if (!file) return;
-    if (!/image\/(jpeg|png|webp)/.test(file.type)) return toast.error("Use JPG, PNG or WEBP");
+    if (!/image\/(jpeg|png|webp)/.test(file.type)) { toast.error("Use JPG, PNG or WEBP"); return; }
     const r = new FileReader(); r.onload = () => setImage(r.result as string); r.readAsDataURL(file);
   };
   const wrap = (a: string, b = a) => set("content", f.content + a + "text" + b);
@@ -54,7 +54,7 @@ function Editor() {
   const words = f.content.split(/\s+/).filter(Boolean).length;
 
   const save = (status: Status) => {
-    if (!f.title.trim()) return toast.error("Add a title first");
+    if (!f.title.trim()) { toast.error("Add a title first"); return; }
     const today = new Date().toISOString().slice(0, 10);
     blog.upsert({
       id: existing?.id ?? String(Date.now()), title: f.title, slug: f.slug || slugify(f.title),
