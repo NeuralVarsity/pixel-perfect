@@ -5,6 +5,7 @@ import {
   PenLine, CalendarClock, CheckCircle2, Settings, ChevronsLeft, Moon, Sun, Bell, Plus, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/nv-logo.png.asset.json";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -30,8 +31,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full">
       <aside className={cn("glass sticky top-0 z-20 hidden h-screen shrink-0 flex-col rounded-none border-y-0 border-l-0 transition-all duration-300 md:flex", collapsed ? "w-[72px]" : "w-64")}>
-        <div className="flex h-16 items-center gap-2 px-4">
-          <div className="bg-brand grid size-9 shrink-0 place-items-center rounded-xl text-accent-foreground"><Sparkles className="size-5" /></div>
+        <div className="flex h-16 items-center gap-2.5 px-4">
+          <div className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-foreground/95 p-0.5 dark:bg-foreground"><img src={logo.url} alt="NeuralVarsity logo" className="size-full object-contain" /></div>
           {!collapsed && <div className="font-display text-sm font-bold leading-tight">NeuralVarsity<span className="text-brand">.ai</span><div className="text-[11px] font-medium text-muted-foreground">Blog Studio</div></div>}
         </div>
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
@@ -87,6 +88,6 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const cls = status === "Published" ? "bg-success/15 text-success" : status === "Scheduled" ? "bg-primary/15 text-primary" : "bg-warning/15 text-warning";
+  const cls = { Published: "bg-success/15 text-success", Scheduled: "bg-primary/15 text-primary", Approved: "bg-accent/15 text-accent", Review: "bg-destructive/15 text-destructive" }[status] ?? "bg-muted text-muted-foreground";
   return <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold", cls)}><span className="size-1.5 rounded-full bg-current" />{status}</span>;
 }
