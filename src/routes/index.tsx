@@ -1,24 +1,104 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { FileText, CheckCircle2, PenLine, CalendarClock, Eye, Users, TrendingUp, Trophy } from "lucide-react";
+import { usePosts } from "@/lib/blog-store";
+import { PageHeader, StatusBadge } from "@/components/AppShell";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Dashboard — NeuralVarsity.ai Blog Studio" },
+      { name: "description", content: "Overview of posts, readers and top articles on NeuralVarsity.ai." },
+      { property: "og:title", content: "Dashboard — NeuralVarsity.ai Blog Studio" },
+      { property: "og:description", content: "Overview of posts, readers and top articles on NeuralVarsity.ai." },
+    ],
+  }),
+  component: Dashboard,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Counter({ value }: { value: number }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf = 0; const start = performance.now();
+    const tick = (t: number) => { const k = Math.min(1, (t - start) / 900); setN(Math.round(value * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{n.toLocaleString()}</>;
+}
+
+const traffic = ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"].map((m, i) => ({ m, v: [12, 18, 15, 24, 31, 29, 42][i] * 1000 }));
+
+function Dashboard() {
+  const posts = usePosts();
+  const count = (s: string) => posts.filter((p) => p.status === s).length;
+  const views = posts.reduce((a, p) => a + p.views, 0);
+  const top = [...posts].sort((a, b) => b.views - a.views)[0];
+  const stats = [
+    { l: "Total Blogs", v: posts.length, i: FileText, t: "+12%" },
+    { l: "Published", v: count("Published"), i: CheckCircle2, t: "+8%" },
+    { l: "Drafts", v: count("Draft"), i: PenLine, t: "+3" },
+    { l: "Scheduled", v: count("Scheduled"), i: CalendarClock, t: "+2" },
+    { l: "Total Views", v: views, i: Eye, t: "+24%" },
+    { l: "Monthly Readers", v: 42180, i: Users, t: "+18%" },
+  ];
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <PageHeader title="Good afternoon, editor" subtitle="Here's how NeuralVarsity's blog is performing." />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {stats.map((s, idx) => (
+          <div key={s.l} className="glass group relative overflow-hidden rounded-2xl p-5 transition-transform hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-2" style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "both" }}>
+            <div className="bg-brand absolute -right-10 -top-10 size-32 rounded-full opacity-10 blur-2xl transition-opacity group-hover:opacity-25" />
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">{s.l}</span>
+              <span className="grid size-9 place-items-center rounded-xl bg-primary/10 text-primary"><s.i className="size-4" /></span>
+            </div>
+            <div className="mt-3 font-display text-3xl font-bold tabular-nums"><Counter value={s.v} /></div>
+            <div className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-success"><TrendingUp className="size-3" />{s.t} vs last month</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <div className="glass rounded-2xl p-5 lg:col-span-2">
+          <h2 className="font-semibold">Readers over time</h2>
+          <div className="mt-4 h-64">
+            <ResponsiveContainer>
+              <AreaChart data={traffic}>
+                <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.5} /><stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} /></linearGradient></defs>
+                <XAxis dataKey="m" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ background: "var(--color-popover)", border: "1px solid var(--color-border)", borderRadius: 12 }} />
+                <Area dataKey="v" stroke="var(--color-primary)" strokeWidth={2} fill="url(#g)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        {top && (
+          <div className="glass overflow-hidden rounded-2xl">
+            <img src={top.image} alt="" className="h-40 w-full object-cover" />
+            <div className="p-5">
+              <div className="inline-flex items-center gap-1 text-xs font-semibold text-accent"><Trophy className="size-3" />Top performing article</div>
+              <h3 className="mt-2 font-semibold leading-snug">{top.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{top.views.toLocaleString()} views · {top.author}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="glass mt-6 rounded-2xl p-5">
+        <div className="flex items-center justify-between"><h2 className="font-semibold">Recent posts</h2><Link to="/posts" className="text-sm text-primary">View all</Link></div>
+        <ul className="mt-3 divide-y">
+          {posts.slice(0, 5).map((p) => (
+            <li key={p.id} className="flex items-center gap-3 py-3">
+              <img src={p.image} alt="" loading="lazy" className="h-10 w-14 rounded-md object-cover" />
+              <div className="min-w-0 flex-1"><div className="truncate font-medium">{p.title}</div><div className="text-xs text-muted-foreground">{p.author} · {p.updated}</div></div>
+              <StatusBadge status={p.status} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
