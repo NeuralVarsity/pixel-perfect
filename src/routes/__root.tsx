@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -14,6 +15,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/AppShell";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -21,7 +23,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-brand text-7xl font-bold">404</h1>
         <p className="mt-2 text-sm text-muted-foreground">This page doesn't exist.</p>
-        <Link to="/" className="btn-primary mt-6">Go to dashboard</Link>
+        <Link to="/dashboard" className="btn-primary mt-6">Go to dashboard</Link>
       </div>
     </div>
   );
@@ -80,11 +82,35 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const PUBLIC = ["/auth", "/reset-password", "/blog/"];
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const isPublic = path === "/" || PUBLIC.some((p) => path.startsWith(p));
+
+  useEffect(() => {
+    if (localStorage.getItem("nv-forget") && !sessionStorage.getItem("nv-session")) {
+      localStorage.removeItem("nv-forget");
+      void supabase.auth.signOut();
+    }
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      router.invalidate();
+      if (event === "SIGNED_OUT") return;
+      queryClient.invalidateQueries();
+      if (event === "SIGNED_IN" && session && !sessionStorage.getItem("nv-logged")) {
+        sessionStorage.setItem("nv-logged", "1");
+        setTimeout(() => { void supabase.from("activity_logs").insert({ actor_id: session.user.id, action: "User login", entity: "user", details: session.user.email ?? "" }); }, 0);
+      }
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router, queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell><Outlet /></AppShell>
+      {isPublic ? <Outlet /> : <AppShell><Outlet /></AppShell>}
       <Toaster richColors position="bottom-right" />
     </QueryClientProvider>
   );

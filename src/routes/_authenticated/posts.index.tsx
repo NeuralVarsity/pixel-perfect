@@ -6,7 +6,7 @@ import { PostsTable } from "@/components/PostsTable";
 import { GridView, KanbanView, ListView } from "@/components/PostViews";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/posts/")({
+export const Route = createFileRoute("/_authenticated/posts/")({
   head: () => ({
     meta: [
       { title: "Blog Posts — NeuralVarsity.ai Blog Studio" },

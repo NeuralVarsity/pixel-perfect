@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/AppShell";
 import { PostsTable } from "@/components/PostsTable";
 
-export const Route = createFileRoute("/published")({
+export const Route = createFileRoute("/_authenticated/published")({
   head: () => ({
     meta: [
       { title: "Published Posts — NeuralVarsity.ai Blog Studio" },

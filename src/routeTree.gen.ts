@@ -10,138 +10,211 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
-import { Route as AuthorsRouteImport } from './routes/authors'
-import { Route as CategoriesRouteImport } from './routes/categories'
-import { Route as DraftsRouteImport } from './routes/drafts'
-import { Route as MediaRouteImport } from './routes/media'
-import { Route as PublishedRouteImport } from './routes/published'
-import { Route as ScheduledRouteImport } from './routes/scheduled'
-import { Route as SeoRouteImport } from './routes/seo'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as TagsRouteImport } from './routes/tags'
-import { Route as PostsIndexRouteImport } from './routes/posts.index'
-import { Route as PostsNewRouteImport } from './routes/posts.new'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated/activity'
+import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
+import { Route as AuthenticatedAuthorsRouteImport } from './routes/_authenticated/authors'
+import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDraftsRouteImport } from './routes/_authenticated/drafts'
+import { Route as AuthenticatedMediaRouteImport } from './routes/_authenticated/media'
+import { Route as AuthenticatedPublishedRouteImport } from './routes/_authenticated/published'
+import { Route as AuthenticatedScheduledRouteImport } from './routes/_authenticated/scheduled'
+import { Route as AuthenticatedSeoRouteImport } from './routes/_authenticated/seo'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedTagsRouteImport } from './routes/_authenticated/tags'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts.index'
+import { Route as AuthenticatedPostsNewRouteImport } from './routes/_authenticated/posts.new'
+import { Route as AuthenticatedPreviewIdRouteImport } from './routes/_authenticated/preview.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AnalyticsRoute = AnalyticsRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedActivityRoute = AuthenticatedActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthorsRoute = AuthorsRouteImport.update({
+const AuthenticatedAuthorsRoute = AuthenticatedAuthorsRouteImport.update({
   id: '/authors',
   path: '/authors',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CategoriesRoute = CategoriesRouteImport.update({
+const AuthenticatedCategoriesRoute = AuthenticatedCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const DraftsRoute = DraftsRouteImport.update({
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDraftsRoute = AuthenticatedDraftsRouteImport.update({
   id: '/drafts',
   path: '/drafts',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const MediaRoute = MediaRouteImport.update({
+const AuthenticatedMediaRoute = AuthenticatedMediaRouteImport.update({
   id: '/media',
   path: '/media',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const PublishedRoute = PublishedRouteImport.update({
+const AuthenticatedPublishedRoute = AuthenticatedPublishedRouteImport.update({
   id: '/published',
   path: '/published',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ScheduledRoute = ScheduledRouteImport.update({
+const AuthenticatedScheduledRoute = AuthenticatedScheduledRouteImport.update({
   id: '/scheduled',
   path: '/scheduled',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SeoRoute = SeoRouteImport.update({
+const AuthenticatedSeoRoute = AuthenticatedSeoRouteImport.update({
   id: '/seo',
   path: '/seo',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const TagsRoute = TagsRouteImport.update({
+const AuthenticatedTagsRoute = AuthenticatedTagsRouteImport.update({
   id: '/tags',
   path: '/tags',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
+const AuthenticatedPostsIndexRoute = AuthenticatedPostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const PostsNewRoute = PostsNewRouteImport.update({
+const AuthenticatedPostsNewRoute = AuthenticatedPostsNewRouteImport.update({
   id: '/posts/new',
   path: '/posts/new',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPreviewIdRoute = AuthenticatedPreviewIdRouteImport.update({
+  id: '/preview/$id',
+  path: '/preview/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/authors': typeof AuthorsRoute
-  '/categories': typeof CategoriesRoute
-  '/drafts': typeof DraftsRoute
-  '/media': typeof MediaRoute
-  '/published': typeof PublishedRoute
-  '/scheduled': typeof ScheduledRoute
-  '/seo': typeof SeoRoute
-  '/settings': typeof SettingsRoute
-  '/tags': typeof TagsRoute
-  '/posts/new': typeof PostsNewRoute
-  '/posts/': typeof PostsIndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/activity': typeof AuthenticatedActivityRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/authors': typeof AuthenticatedAuthorsRoute
+  '/categories': typeof AuthenticatedCategoriesRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/drafts': typeof AuthenticatedDraftsRoute
+  '/media': typeof AuthenticatedMediaRoute
+  '/published': typeof AuthenticatedPublishedRoute
+  '/scheduled': typeof AuthenticatedScheduledRoute
+  '/seo': typeof AuthenticatedSeoRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/tags': typeof AuthenticatedTagsRoute
+  '/users': typeof AuthenticatedUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/posts/new': typeof AuthenticatedPostsNewRoute
+  '/preview/$id': typeof AuthenticatedPreviewIdRoute
+  '/posts/': typeof AuthenticatedPostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/authors': typeof AuthorsRoute
-  '/categories': typeof CategoriesRoute
-  '/drafts': typeof DraftsRoute
-  '/media': typeof MediaRoute
-  '/published': typeof PublishedRoute
-  '/scheduled': typeof ScheduledRoute
-  '/seo': typeof SeoRoute
-  '/settings': typeof SettingsRoute
-  '/tags': typeof TagsRoute
-  '/posts/new': typeof PostsNewRoute
-  '/posts': typeof PostsIndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/activity': typeof AuthenticatedActivityRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/authors': typeof AuthenticatedAuthorsRoute
+  '/categories': typeof AuthenticatedCategoriesRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/drafts': typeof AuthenticatedDraftsRoute
+  '/media': typeof AuthenticatedMediaRoute
+  '/published': typeof AuthenticatedPublishedRoute
+  '/scheduled': typeof AuthenticatedScheduledRoute
+  '/seo': typeof AuthenticatedSeoRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/tags': typeof AuthenticatedTagsRoute
+  '/users': typeof AuthenticatedUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/posts/new': typeof AuthenticatedPostsNewRoute
+  '/preview/$id': typeof AuthenticatedPreviewIdRoute
+  '/posts': typeof AuthenticatedPostsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/authors': typeof AuthorsRoute
-  '/categories': typeof CategoriesRoute
-  '/drafts': typeof DraftsRoute
-  '/media': typeof MediaRoute
-  '/published': typeof PublishedRoute
-  '/scheduled': typeof ScheduledRoute
-  '/seo': typeof SeoRoute
-  '/settings': typeof SettingsRoute
-  '/tags': typeof TagsRoute
-  '/posts/new': typeof PostsNewRoute
-  '/posts/': typeof PostsIndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/activity': typeof AuthenticatedActivityRoute
+  '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
+  '/_authenticated/authors': typeof AuthenticatedAuthorsRoute
+  '/_authenticated/categories': typeof AuthenticatedCategoriesRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/drafts': typeof AuthenticatedDraftsRoute
+  '/_authenticated/media': typeof AuthenticatedMediaRoute
+  '/_authenticated/published': typeof AuthenticatedPublishedRoute
+  '/_authenticated/scheduled': typeof AuthenticatedScheduledRoute
+  '/_authenticated/seo': typeof AuthenticatedSeoRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/tags': typeof AuthenticatedTagsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/_authenticated/posts/new': typeof AuthenticatedPostsNewRoute
+  '/_authenticated/preview/$id': typeof AuthenticatedPreviewIdRoute
+  '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/activity'
     | '/analytics'
     | '/authors'
     | '/categories'
+    | '/dashboard'
     | '/drafts'
     | '/media'
     | '/published'
@@ -149,14 +222,21 @@ export interface FileRouteTypes {
     | '/seo'
     | '/settings'
     | '/tags'
+    | '/users'
+    | '/blog/$slug'
     | '/posts/new'
+    | '/preview/$id'
     | '/posts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/activity'
     | '/analytics'
     | '/authors'
     | '/categories'
+    | '/dashboard'
     | '/drafts'
     | '/media'
     | '/published'
@@ -164,39 +244,42 @@ export interface FileRouteTypes {
     | '/seo'
     | '/settings'
     | '/tags'
+    | '/users'
+    | '/blog/$slug'
     | '/posts/new'
+    | '/preview/$id'
     | '/posts'
   id:
     | '__root__'
     | '/'
-    | '/analytics'
-    | '/authors'
-    | '/categories'
-    | '/drafts'
-    | '/media'
-    | '/published'
-    | '/scheduled'
-    | '/seo'
-    | '/settings'
-    | '/tags'
-    | '/posts/new'
-    | '/posts/'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/activity'
+    | '/_authenticated/analytics'
+    | '/_authenticated/authors'
+    | '/_authenticated/categories'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/drafts'
+    | '/_authenticated/media'
+    | '/_authenticated/published'
+    | '/_authenticated/scheduled'
+    | '/_authenticated/seo'
+    | '/_authenticated/settings'
+    | '/_authenticated/tags'
+    | '/_authenticated/users'
+    | '/blog/$slug'
+    | '/_authenticated/posts/new'
+    | '/_authenticated/preview/$id'
+    | '/_authenticated/posts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AnalyticsRoute: typeof AnalyticsRoute
-  AuthorsRoute: typeof AuthorsRoute
-  CategoriesRoute: typeof CategoriesRoute
-  DraftsRoute: typeof DraftsRoute
-  MediaRoute: typeof MediaRoute
-  PublishedRoute: typeof PublishedRoute
-  ScheduledRoute: typeof ScheduledRoute
-  SeoRoute: typeof SeoRoute
-  SettingsRoute: typeof SettingsRoute
-  TagsRoute: typeof TagsRoute
-  PostsNewRoute: typeof PostsNewRoute
-  PostsIndexRoute: typeof PostsIndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -208,107 +291,196 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/analytics': {
-      id: '/analytics'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/activity': {
+      id: '/_authenticated/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof AuthenticatedActivityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/analytics': {
+      id: '/_authenticated/analytics'
       path: '/analytics'
       fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/authors': {
-      id: '/authors'
+    '/_authenticated/authors': {
+      id: '/_authenticated/authors'
       path: '/authors'
       fullPath: '/authors'
-      preLoaderRoute: typeof AuthorsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedAuthorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/categories': {
-      id: '/categories'
+    '/_authenticated/categories': {
+      id: '/_authenticated/categories'
       path: '/categories'
       fullPath: '/categories'
-      preLoaderRoute: typeof CategoriesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCategoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/drafts': {
-      id: '/drafts'
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/drafts': {
+      id: '/_authenticated/drafts'
       path: '/drafts'
       fullPath: '/drafts'
-      preLoaderRoute: typeof DraftsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedDraftsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/media': {
-      id: '/media'
+    '/_authenticated/media': {
+      id: '/_authenticated/media'
       path: '/media'
       fullPath: '/media'
-      preLoaderRoute: typeof MediaRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedMediaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/published': {
-      id: '/published'
+    '/_authenticated/published': {
+      id: '/_authenticated/published'
       path: '/published'
       fullPath: '/published'
-      preLoaderRoute: typeof PublishedRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedPublishedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/scheduled': {
-      id: '/scheduled'
+    '/_authenticated/scheduled': {
+      id: '/_authenticated/scheduled'
       path: '/scheduled'
       fullPath: '/scheduled'
-      preLoaderRoute: typeof ScheduledRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedScheduledRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/seo': {
-      id: '/seo'
+    '/_authenticated/seo': {
+      id: '/_authenticated/seo'
       path: '/seo'
       fullPath: '/seo'
-      preLoaderRoute: typeof SeoRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSeoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/tags': {
-      id: '/tags'
+    '/_authenticated/tags': {
+      id: '/_authenticated/tags'
       path: '/tags'
       fullPath: '/tags'
-      preLoaderRoute: typeof TagsRouteImport
+      preLoaderRoute: typeof AuthenticatedTagsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts/': {
-      id: '/posts/'
+    '/_authenticated/posts/': {
+      id: '/_authenticated/posts/'
       path: '/posts'
       fullPath: '/posts/'
-      preLoaderRoute: typeof PostsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedPostsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/posts/new': {
-      id: '/posts/new'
+    '/_authenticated/posts/new': {
+      id: '/_authenticated/posts/new'
       path: '/posts/new'
       fullPath: '/posts/new'
-      preLoaderRoute: typeof PostsNewRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedPostsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/preview/$id': {
+      id: '/_authenticated/preview/$id'
+      path: '/preview/$id'
+      fullPath: '/preview/$id'
+      preLoaderRoute: typeof AuthenticatedPreviewIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedActivityRoute: typeof AuthenticatedActivityRoute
+  AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
+  AuthenticatedAuthorsRoute: typeof AuthenticatedAuthorsRoute
+  AuthenticatedCategoriesRoute: typeof AuthenticatedCategoriesRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDraftsRoute: typeof AuthenticatedDraftsRoute
+  AuthenticatedMediaRoute: typeof AuthenticatedMediaRoute
+  AuthenticatedPublishedRoute: typeof AuthenticatedPublishedRoute
+  AuthenticatedScheduledRoute: typeof AuthenticatedScheduledRoute
+  AuthenticatedSeoRoute: typeof AuthenticatedSeoRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTagsRoute: typeof AuthenticatedTagsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
+  AuthenticatedPostsNewRoute: typeof AuthenticatedPostsNewRoute
+  AuthenticatedPreviewIdRoute: typeof AuthenticatedPreviewIdRoute
+  AuthenticatedPostsIndexRoute: typeof AuthenticatedPostsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedActivityRoute: AuthenticatedActivityRoute,
+  AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
+  AuthenticatedAuthorsRoute: AuthenticatedAuthorsRoute,
+  AuthenticatedCategoriesRoute: AuthenticatedCategoriesRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDraftsRoute: AuthenticatedDraftsRoute,
+  AuthenticatedMediaRoute: AuthenticatedMediaRoute,
+  AuthenticatedPublishedRoute: AuthenticatedPublishedRoute,
+  AuthenticatedScheduledRoute: AuthenticatedScheduledRoute,
+  AuthenticatedSeoRoute: AuthenticatedSeoRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTagsRoute: AuthenticatedTagsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
+  AuthenticatedPostsNewRoute: AuthenticatedPostsNewRoute,
+  AuthenticatedPreviewIdRoute: AuthenticatedPreviewIdRoute,
+  AuthenticatedPostsIndexRoute: AuthenticatedPostsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AnalyticsRoute: AnalyticsRoute,
-  AuthorsRoute: AuthorsRoute,
-  CategoriesRoute: CategoriesRoute,
-  DraftsRoute: DraftsRoute,
-  MediaRoute: MediaRoute,
-  PublishedRoute: PublishedRoute,
-  ScheduledRoute: ScheduledRoute,
-  SeoRoute: SeoRoute,
-  SettingsRoute: SettingsRoute,
-  TagsRoute: TagsRoute,
-  PostsNewRoute: PostsNewRoute,
-  PostsIndexRoute: PostsIndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

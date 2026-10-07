@@ -12,7 +12,7 @@ export function GridView() {
     <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {posts.map((p) => (
         <Link key={p.id} to="/posts/new" search={{ id: p.id }} className="glass group overflow-hidden rounded-2xl transition-transform hover:-translate-y-1">
-          <div className="overflow-hidden"><img src={p.image} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-105" /></div>
+          <div className="overflow-hidden">{p.image ? <img src={p.image} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-105" /> : <div className="bg-brand aspect-[16/9] w-full opacity-30" />}</div>
           <div className="p-5">
             <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{p.category}</span><StatusBadge status={p.status} /></div>
             <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
@@ -30,7 +30,7 @@ export function ListView() {
     <div className="glass divide-y rounded-2xl">
       {posts.map((p) => (
         <Link key={p.id} to="/posts/new" search={{ id: p.id }} className="flex items-center gap-4 p-4 transition-colors hover:bg-muted/50">
-          <img src={p.image} alt="" loading="lazy" className="h-16 w-24 shrink-0 rounded-lg object-cover" />
+          {p.image ? <img src={p.image} alt="" loading="lazy" className="h-16 w-24 shrink-0 rounded-lg object-cover" /> : <div className="bg-brand h-16 w-24 shrink-0 rounded-lg opacity-30" />}
           <div className="min-w-0 flex-1">
             <div className="truncate font-semibold">{p.title}</div>
             <div className="mt-1 text-xs text-muted-foreground">{p.author} · {p.category} · updated {p.updated}</div>
@@ -59,7 +59,7 @@ export function KanbanView() {
             <div className="min-h-24 space-y-2">
               {col.map((p) => (
                 <div key={p.id} draggable onDragStart={() => setDrag(p.id)} className={cn("cursor-grab rounded-xl border bg-background p-3 shadow-sm transition-all hover:border-primary active:cursor-grabbing", drag === p.id && "opacity-40")}>
-                  <img src={p.image} alt="" loading="lazy" className="mb-2 aspect-[16/8] w-full rounded-lg object-cover" />
+                  {p.image && <img src={p.image} alt="" loading="lazy" className="mb-2 aspect-[16/8] w-full rounded-lg object-cover" />}
                   <div className="text-sm font-semibold leading-snug">{p.title}</div>
                   <div className="mt-1 text-xs text-muted-foreground">{p.author}</div>
                 </div>
