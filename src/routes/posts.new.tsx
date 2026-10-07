@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { Bold, Heading2, Italic, Link2, List, Quote, Code, ImagePlus, X, Check } from "lucide-react";
+import { Check, Sparkles, Cloud } from "lucide-react";
 import { toast } from "sonner";
 import { authors, blog, categories, type Status } from "@/lib/blog-store";
-import { PageHeader } from "@/components/AppShell";
+import { BlockEditor, blocksToMarkdown, markdownToBlocks, newBlock, type Block } from "@/components/BlockEditor";
+import { AiAssistant } from "@/components/AiAssistant";
+import { FeaturedImage, type ImageMeta } from "@/components/FeaturedImage";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/posts/new")({
@@ -29,63 +31,92 @@ function Editor() {
   const [f, setF] = useState({
     title: existing?.title ?? "", slug: existing?.slug ?? "", metaTitle: existing?.metaTitle ?? "",
     metaDescription: existing?.metaDescription ?? "", keyword: existing?.keyword ?? "",
-    content: existing?.content ?? "", category: existing?.category ?? categories[0]!,
-    author: existing?.author ?? authors[0]!, tags: existing?.tags.join(", ") ?? "", schedule: "",
+    category: existing?.category ?? categories[0]!, author: existing?.author ?? authors[0]!,
+    tags: existing?.tags.join(", ") ?? "", schedule: "",
   });
-  const [image, setImage] = useState<string | null>(existing?.image ?? null);
-  const [drag, setDrag] = useState(false);
+  const [blocks, setBlocks] = useState<Block[]>(() => markdownToBlocks(existing?.content ?? ""));
+  const [image, setImage] = useState<ImageMeta>({ src: existing?.image ?? null, alt: "", caption: "" });
+  const [aiOpen, setAiOpen] = useState(true);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const draftKey = `nv-draft-${existing?.id ?? "new"}`;
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v, ...(k === "title" && !existing ? { slug: slugify(v) } : {}) }));
 
-  const load = (file?: File) => {
-    if (!file) return;
-    if (!/image\/(jpeg|png|webp)/.test(file.type)) { toast.error("Use JPG, PNG or WEBP"); return; }
-    const r = new FileReader(); r.onload = () => setImage(r.result as string); r.readAsDataURL(file);
-  };
-  const wrap = (a: string, b = a) => set("content", f.content + a + "text" + b);
+  const content = useMemo(() => blocksToMarkdown(blocks), [blocks]);
+  const plain = content.replace(/[#>*`!\[\]()]/g, "");
+  const words = plain.split(/\s+/).filter(Boolean).length;
+  const chars = plain.replace(/\s/g, "").length;
+
+  // restore autosaved draft
+  useEffect(() => {
+    const raw = localStorage.getItem(draftKey);
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw);
+      setF((p) => ({ ...p, ...d.f })); setBlocks(d.blocks); toast("Restored your autosaved draft");
+    } catch { /* ignore */ }
+  }, [draftKey]);
+  // autosave
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!f.title && words === 0) return;
+      localStorage.setItem(draftKey, JSON.stringify({ f, blocks }));
+      setSavedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [f, blocks, draftKey, words]);
 
   const checks = [
     { ok: f.title.length >= 20 && f.title.length <= 70, l: "Title is 20–70 characters" },
-    { ok: f.metaDescription.length >= 120 && f.metaDescription.length <= 160, l: "Meta description is 120–160 characters" },
+    { ok: f.metaDescription.length >= 120 && f.metaDescription.length <= 160, l: "Meta description 120–160 chars" },
     { ok: !!f.keyword && f.title.toLowerCase().includes(f.keyword.toLowerCase()), l: "Focus keyword in title" },
-    { ok: f.content.split(/\s+/).filter(Boolean).length >= 300, l: "Content has 300+ words" },
-    { ok: !!image, l: "Featured image set" },
+    { ok: words >= 300, l: "Content has 300+ words" },
+    { ok: !!image.src, l: "Featured image set" },
+    { ok: !!image.src && !!image.alt, l: "Image has alt text" },
   ];
   const score = Math.round((checks.filter((c) => c.ok).length / checks.length) * 100);
-  const words = f.content.split(/\s+/).filter(Boolean).length;
+
+  const insertAi = (text: string) => {
+    const metaLike = text.length < 200 && !text.includes("\n");
+    setBlocks((b) => [...b.filter((x) => x.text || x.type !== "p"), ...markdownToBlocks(text), ...(metaLike ? [] : [newBlock()])]);
+    toast.success("Inserted into post");
+  };
 
   const save = (status: Status) => {
     if (!f.title.trim()) { toast.error("Add a title first"); return; }
     const today = new Date().toISOString().slice(0, 10);
     blog.upsert({
       id: existing?.id ?? String(Date.now()), title: f.title, slug: f.slug || slugify(f.title),
-      image: image ?? existing?.image ?? "", author: f.author, category: f.category,
+      image: image.src ?? "", author: f.author, category: f.category,
       tags: f.tags.split(",").map((t) => t.trim()).filter(Boolean), status, views: existing?.views ?? 0,
       published: status === "Scheduled" ? f.schedule || today : today, updated: today,
-      content: f.content, metaTitle: f.metaTitle, metaDescription: f.metaDescription, keyword: f.keyword,
+      content, metaTitle: f.metaTitle, metaDescription: f.metaDescription, keyword: f.keyword,
     });
-    toast.success(status === "Published" ? "Published!" : status === "Scheduled" ? "Scheduled" : "Draft saved");
+    localStorage.removeItem(draftKey);
+    toast.success(status === "Published" ? "Published!" : status === "Scheduled" ? "Scheduled" : status === "Review" ? "Sent for review" : "Draft saved");
     nav({ to: "/posts" });
   };
 
   return (
     <>
-      <PageHeader title={existing ? "Edit post" : "New post"} subtitle={`${words} words · ${Math.max(1, Math.round(words / 220))} min read`}
-        action={<div className="flex gap-2"><button className="btn" onClick={() => save("Draft")}>Save draft</button><button className="btn-primary" onClick={() => save(f.schedule ? "Scheduled" : "Published")}>{f.schedule ? "Schedule" : "Publish"}</button></div>} />
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="space-y-6">
-          <div className="glass rounded-2xl p-6">
-            <input value={f.title} onChange={(e) => set("title", e.target.value)} placeholder="Post title" className="w-full bg-transparent font-display text-3xl font-bold outline-none placeholder:text-muted-foreground/50" />
-            <div className="mt-2 text-xs text-muted-foreground">neuralvarsity.ai/blog/<input value={f.slug} onChange={(e) => set("slug", slugify(e.target.value))} className="bg-transparent text-primary outline-none" placeholder="slug" /></div>
-            <div className="mt-6 flex flex-wrap gap-1 border-b pb-2">
-              {[[Heading2, "## ", ""], [Bold, "**"], [Italic, "_"], [Quote, "> ", ""], [List, "- ", ""], [Code, "`"], [Link2, "[", "](url)"]].map(([I, a, b], i) => {
-                const Icon = I as typeof Bold;
-                return <button key={i} onClick={() => wrap(a as string, b as string | undefined)} className="grid size-8 place-items-center rounded-md hover:bg-muted"><Icon className="size-4" /></button>;
-              })}
-            </div>
-            <textarea value={f.content} onChange={(e) => set("content", e.target.value)} placeholder="Start writing your story…" className="mt-4 min-h-[420px] w-full resize-y bg-transparent text-[15px] leading-7 outline-none" />
-          </div>
+      <div className="glass sticky top-16 z-[5] -mx-4 -mt-8 mb-6 flex flex-wrap items-center gap-3 rounded-none border-x-0 border-t-0 px-4 py-3 md:-mx-8 md:px-8">
+        <span className="text-xs text-muted-foreground tabular-nums">{words} words · {chars} chars · {Math.max(1, Math.round(words / 220))} min read</span>
+        {savedAt && <span className="inline-flex items-center gap-1 text-xs text-success"><Cloud className="size-3" />Autosaved {savedAt}</span>}
+        <div className="ml-auto flex gap-2">
+          {!aiOpen && <button className="btn" onClick={() => setAiOpen(true)}><Sparkles className="size-4 text-primary" />AI</button>}
+          <button className="btn" onClick={() => save("Draft")}>Save draft</button>
+          <button className="btn hidden sm:inline-flex" onClick={() => save("Review")}>Send to review</button>
+          <button className="btn-primary" onClick={() => save(f.schedule ? "Scheduled" : "Published")}>{f.schedule ? "Schedule" : "Publish"}</button>
+        </div>
+      </div>
 
-          <div className="glass space-y-4 rounded-2xl p-6">
+      <div className={cn("grid gap-6", aiOpen ? "xl:grid-cols-[1fr_300px_360px] lg:grid-cols-[1fr_300px]" : "lg:grid-cols-[1fr_300px]")}>
+        <article className="mx-auto w-full max-w-3xl pl-14">
+          <textarea value={f.title} onChange={(e) => set("title", e.target.value)} rows={1} placeholder="Untitled story"
+            className="w-full resize-none bg-transparent font-display text-4xl font-bold leading-tight outline-none placeholder:text-muted-foreground/40 md:text-5xl" />
+          <div className="mb-8 mt-2 text-xs text-muted-foreground">neuralvarsity.ai/blog/<input value={f.slug} onChange={(e) => set("slug", slugify(e.target.value))} className="bg-transparent text-primary outline-none" placeholder="slug" /></div>
+          <BlockEditor blocks={blocks} setBlocks={setBlocks} />
+
+          <div className="glass mt-12 space-y-4 rounded-2xl p-6">
             <h2 className="font-semibold">SEO & meta</h2>
             <Field label={`Meta title (${f.metaTitle.length}/60)`}><input className="field" value={f.metaTitle} onChange={(e) => set("metaTitle", e.target.value)} /></Field>
             <Field label={`Meta description (${f.metaDescription.length}/160)`}><textarea className="field min-h-20" value={f.metaDescription} onChange={(e) => set("metaDescription", e.target.value)} /></Field>
@@ -96,28 +127,10 @@ function Editor() {
               <div className="mt-1 line-clamp-2 text-sm text-muted-foreground">{f.metaDescription || "Your meta description will appear here in search results."}</div>
             </div>
           </div>
-        </div>
+        </article>
 
         <aside className="space-y-6">
-          <div className="glass rounded-2xl p-5">
-            <h2 className="mb-3 font-semibold">Featured image</h2>
-            {image ? (
-              <div className="group relative overflow-hidden rounded-xl">
-                <img src={image} alt="" className="aspect-video w-full object-cover" />
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-background/70 opacity-0 transition-opacity group-hover:opacity-100">
-                  <label className="btn cursor-pointer bg-background">Replace<input type="file" hidden accept="image/jpeg,image/png,image/webp" onChange={(e) => load(e.target.files?.[0])} /></label>
-                  <button className="btn bg-background" onClick={() => setImage(null)}><X className="size-4" />Remove</button>
-                </div>
-              </div>
-            ) : (
-              <label onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); load(e.dataTransfer.files[0]); }}
-                className={cn("flex aspect-video cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed text-sm text-muted-foreground transition-colors", drag && "border-primary bg-primary/5")}>
-                <ImagePlus className="size-6 text-primary" />Drop an image or click to upload<span className="text-xs">JPG, PNG, WEBP</span>
-                <input type="file" hidden accept="image/jpeg,image/png,image/webp" onChange={(e) => load(e.target.files?.[0])} />
-              </label>
-            )}
-          </div>
-
+          <div className="glass rounded-2xl p-5"><h2 className="mb-3 font-semibold">Featured image</h2><FeaturedImage value={image} onChange={setImage} title={f.title} /></div>
           <div className="glass space-y-4 rounded-2xl p-5">
             <h2 className="font-semibold">Publishing</h2>
             <Field label="Category"><select className="field" value={f.category} onChange={(e) => set("category", e.target.value)}>{categories.map((c) => <option key={c}>{c}</option>)}</select></Field>
@@ -125,7 +138,6 @@ function Editor() {
             <Field label="Tags (comma separated)"><input className="field" value={f.tags} onChange={(e) => set("tags", e.target.value)} placeholder="llm, career" /></Field>
             <Field label="Schedule for (optional)"><input type="date" className="field" value={f.schedule} onChange={(e) => set("schedule", e.target.value)} /></Field>
           </div>
-
           <div className="glass rounded-2xl p-5">
             <div className="flex items-center justify-between"><h2 className="font-semibold">SEO score</h2><span className="text-brand font-display text-2xl font-bold">{score}</span></div>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted"><div className="bg-brand h-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
@@ -134,6 +146,8 @@ function Editor() {
             </ul>
           </div>
         </aside>
+
+        {aiOpen && <div className="xl:sticky xl:top-36 xl:self-start lg:col-span-2 xl:col-span-1"><AiAssistant context={`Title: ${f.title}\nKeyword: ${f.keyword}\n\n${content}`} onInsert={insertAi} onClose={() => setAiOpen(false)} /></div>}
       </div>
     </>
   );

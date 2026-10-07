@@ -44,9 +44,43 @@ function Dashboard() {
     { l: "Monthly Readers", v: 42180, i: Users, t: "+18%" },
   ];
 
+  const groups = [
+    { t: "Traffic", items: [["Organic Traffic", "61%", "+9%"], ["Returning Visitors", "34%", "+4%"], ["Avg. Read Time", "4m 12s", "+11%"], ["Bounce Rate", "38%", "-6%"]] },
+    { t: "Content", items: [["In Review", String(count("Review")), ""], ["Approved", String(count("Approved")), ""], ["AI-assisted Blogs", "5", "+3"], ["Avg. Words", "1,840", "+7%"]] },
+    { t: "SEO", items: [["Avg. SEO Score", "78", "+5"], ["Ranked Keywords", "1,264", "+142"], ["Top-10 Articles", "9", "+2"], ["SEO Growth", "+21%", ""]] },
+  ];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
   return (
     <>
       <PageHeader title="Good afternoon, editor" subtitle="Here's how NeuralVarsity's blog is performing." />
+      <div className="mb-6 grid gap-4 lg:grid-cols-3">
+        {groups.map((g) => (
+          <div key={g.t} className="glass rounded-2xl p-5">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{g.t} metrics</div>
+            <div className="mt-3 grid grid-cols-2 gap-4">
+              {g.items.map(([l, v, d]) => (
+                <div key={l}><div className="text-xs text-muted-foreground">{l}</div><div className="font-display text-xl font-bold">{v}</div>{d && <div className={d.startsWith("-") ? "text-xs text-success" : "text-xs text-success"}>{d}</div>}</div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="glass mb-6 overflow-x-auto rounded-2xl p-5">
+        <h2 className="font-semibold">Reader activity heatmap</h2>
+        <p className="text-xs text-muted-foreground">When readers open articles (hour of day)</p>
+        <div className="mt-4 min-w-[640px] space-y-1">
+          {days.map((d, r) => (
+            <div key={d} className="flex items-center gap-1">
+              <span className="w-10 text-xs text-muted-foreground">{d}</span>
+              {Array.from({ length: 24 }, (_, h) => {
+                const v = Math.max(0.06, Math.sin(((h - 6) / 24) * Math.PI * 2) * 0.5 + 0.45 + ((r * 7 + h * 3) % 5) * 0.04 - (r > 4 ? 0.2 : 0));
+                return <div key={h} title={`${d} ${h}:00`} className="h-5 flex-1 rounded-sm bg-primary transition-transform hover:scale-125" style={{ opacity: Math.min(1, v) }} />;
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((s, idx) => (
           <div key={s.l} className="glass group relative overflow-hidden rounded-2xl p-5 transition-transform hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-2" style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "both" }}>
