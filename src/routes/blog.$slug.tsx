@@ -35,7 +35,7 @@ function Page() {
     let sent = false;
     const send = () => {
       if (sent) return; sent = true;
-      void supabase.from("page_views").insert({ blog_id: post.id, visitor_id: vid!, referrer: document.referrer.slice(0, 300) || null, read_seconds: Math.min(7200, Math.round((Date.now() - start) / 1000)) });
+      void supabase.from("page_views").insert({ blog_id: post.id, visitor_id: vid!, referrer: document.referrer.slice(0, 300) || null, read_seconds: Math.min(7200, Math.round((Date.now() - start) / 1000)) }).then(() => {});
     };
     const onHide = () => { if (document.visibilityState === "hidden") send(); };
     document.addEventListener("visibilitychange", onHide);
