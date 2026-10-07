@@ -35,12 +35,13 @@ function Page() {
     let sent = false;
     const send = () => {
       if (sent) return; sent = true;
-      void supabase.from("page_views").insert({ blog_id: post.id, visitor_id: vid!, referrer: document.referrer.slice(0, 300) || null, read_seconds: Math.min(7200, Math.round((Date.now() - start) / 1000)) });
+      void supabase.from("page_views").insert({ blog_id: post.id, visitor_id: vid!, referrer: document.referrer.slice(0, 300) || null, read_seconds: Math.min(7200, Math.round((Date.now() - start) / 1000)) }).then(() => {});
     };
     const onHide = () => { if (document.visibilityState === "hidden") send(); };
     document.addEventListener("visibilitychange", onHide);
     window.addEventListener("pagehide", send);
-    return () => { document.removeEventListener("visibilitychange", onHide); window.removeEventListener("pagehide", send); send(); };
+    const timer = setTimeout(send, 15000);
+    return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", onHide); window.removeEventListener("pagehide", send); send(); };
   }, [post.id]);
   return <div className="px-4 py-16"><ArticleView a={post} /></div>;
 }

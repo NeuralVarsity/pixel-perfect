@@ -95,15 +95,11 @@ function RootComponent() {
       localStorage.removeItem("nv-forget");
       void supabase.auth.signOut();
     }
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event === "SIGNED_OUT") return;
       queryClient.invalidateQueries();
-      if (event === "SIGNED_IN" && session && !sessionStorage.getItem("nv-logged")) {
-        sessionStorage.setItem("nv-logged", "1");
-        setTimeout(() => { void supabase.from("activity_logs").insert({ actor_id: session.user.id, action: "User login", entity: "user", details: session.user.email ?? "" }); }, 0);
-      }
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
