@@ -2,13 +2,15 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowUpDown, Copy, Download, Eye, Pencil, Trash2, Upload, Send, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { blog, categories, usePosts, type Post, type Status } from "@/lib/blog-store";
+import { blog, usePostsQuery, useCategories, invalidate, type Post, type Status } from "@/lib/blog-store";
+import { supabase } from "@/integrations/supabase/client";
 import { StatusBadge } from "./AppShell";
 
 const PAGE = 6;
 
 export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
-  const all = usePosts();
+  const { data: all = [], isLoading } = usePostsQuery();
+  const categories = useCategories().map((c) => c.name);
   const nav = useNavigate();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<string>(fixedStatus ?? "All");
@@ -34,7 +36,21 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
     Object.assign(document.createElement("a"), { href: url, download: "blogs.csv" }).click();
     toast.success(`Exported ${rows.length} posts`);
   };
-  const bulk = (fn: () => void, msg: string) => { fn(); toast.success(msg); setSel([]); };
+  const bulk = async (fn: () => Promise<void>, msg: string) => { await fn(); toast.success(msg); setSel([]); };
+  const importCsv = async (file?: File) => {
+    if (!file) return;
+    const lines = (await file.text()).split(/\r?\n/).filter(Boolean);
+    const head = (lines.shift() ?? "").toLowerCase().split(",").map((h) => h.replace(/"/g, "").trim());
+    const ti = head.indexOf("title");
+    if (ti < 0) { toast.error("CSV needs a 'title' column"); return; }
+    const { data: u } = await supabase.auth.getUser();
+    const rows = lines.map((l) => l.split(",")[ti]?.replace(/"/g, "").trim()).filter((t): t is string => !!t).map((title) => ({
+      title, slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + "-" + Math.random().toString(36).slice(2, 6),
+      author_id: u.user!.id, status: "draft" as const,
+    }));
+    const { error } = await supabase.from("blogs").insert(rows);
+    if (error) toast.error(error.message); else { toast.success(`Imported ${rows.length} drafts`); invalidate("posts"); }
+  };
   const Th = ({ k, children }: { k: keyof Post; children: string }) => (
     <th className="px-3 py-3 text-left"><button onClick={() => sortBy(k)} className="inline-flex items-center gap-1 hover:text-foreground">{children}<ArrowUpDown className="size-3" /></button></th>
   );
@@ -52,7 +68,7 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
           {["All", ...categories].map((s) => <option key={s}>{s}</option>)}
         </select>
         <div className="ml-auto flex gap-2">
-          <label className="btn cursor-pointer"><Upload className="size-4" />Import<input type="file" accept=".csv,.json" hidden onChange={() => toast.success("Import queued")} /></label>
+          <label className="btn cursor-pointer"><Upload className="size-4" />Import<input type="file" accept=".csv" hidden onChange={(e) => importCsv(e.target.files?.[0])} /></label>
           <button onClick={exportCsv} className="btn"><Download className="size-4" />Export CSV</button>
         </div>
       </div>
@@ -62,7 +78,7 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
           <span className="font-semibold">{sel.length} selected</span>
           <button className="btn py-1" onClick={() => bulk(() => blog.setStatus(sel, "Published"), "Published")}>Publish</button>
           <button className="btn py-1" onClick={() => bulk(() => blog.setStatus(sel, "Draft"), "Moved to drafts")}>Unpublish</button>
-          <button className="btn py-1 text-destructive" onClick={() => bulk(() => blog.remove(sel), "Deleted")}>Delete</button>
+          <button className="btn py-1 text-destructive" onClick={() => confirm(`Delete ${sel.length} posts?`) && bulk(() => blog.remove(sel), "Deleted")}>Delete</button>
         </div>
       )}
 
@@ -84,7 +100,7 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
                 <td className="px-4"><input type="checkbox" checked={sel.includes(p.id)} onChange={(e) => setSel(e.target.checked ? [...sel, p.id] : sel.filter((x) => x !== p.id))} /></td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-3">
-                    <img src={p.image} alt="" loading="lazy" className="h-10 w-14 rounded-md object-cover" />
+                    {p.image ? <img src={p.image} alt="" loading="lazy" className="h-10 w-14 rounded-md object-cover" /> : <div className="bg-brand h-10 w-14 shrink-0 rounded-md opacity-40" />}
                     <span className="max-w-[240px] font-semibold leading-snug">{p.title}</span>
                   </div>
                 </td>
@@ -97,18 +113,18 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
                 <td className="px-3 text-muted-foreground">{p.updated}</td>
                 <td className="px-3">
                   <div className="flex justify-end gap-0.5 opacity-60 transition-opacity group-hover:opacity-100">
-                    <IconBtn label="View" onClick={() => toast(p.title)}><Eye /></IconBtn>
+                    <IconBtn label="View" onClick={() => nav({ to: "/preview/$id", params: { id: p.id } })}><Eye /></IconBtn>
                     <IconBtn label="Edit" onClick={() => nav({ to: "/posts/new", search: { id: p.id } })}><Pencil /></IconBtn>
-                    <IconBtn label="Duplicate" onClick={() => { blog.duplicate(p.id); toast.success("Duplicated"); }}><Copy /></IconBtn>
+                    <IconBtn label="Duplicate" onClick={async () => { await blog.duplicate(p.id); toast.success("Duplicated"); }}><Copy /></IconBtn>
                     {p.status === "Published"
                       ? <IconBtn label="Unpublish" onClick={() => blog.setStatus([p.id], "Draft")}><EyeOff /></IconBtn>
-                      : <IconBtn label="Publish" onClick={() => { blog.setStatus([p.id], "Published"); toast.success("Published"); }}><Send /></IconBtn>}
-                    <IconBtn label="Delete" onClick={() => { blog.remove([p.id]); toast.success("Deleted"); }}><Trash2 className="text-destructive" /></IconBtn>
+                      : <IconBtn label="Publish" onClick={async () => { await blog.setStatus([p.id], "Published"); toast.success("Published"); }}><Send /></IconBtn>}
+                    <IconBtn label="Delete" onClick={async () => { if (confirm("Delete this post?")) { await blog.remove([p.id]); toast.success("Deleted"); } }}><Trash2 className="text-destructive" /></IconBtn>
                   </div>
                 </td>
               </tr>
             ))}
-            {view.length === 0 && <tr><td colSpan={10} className="py-16 text-center text-muted-foreground">No posts found. <Link to="/posts/new" className="text-primary underline">Write one</Link></td></tr>}
+            {view.length === 0 && <tr><td colSpan={10} className="py-16 text-center text-muted-foreground">{isLoading ? "Loading…" : "No posts found."} <Link to="/posts/new" className="text-primary underline">Write one</Link></td></tr>}
           </tbody>
         </table>
       </div>

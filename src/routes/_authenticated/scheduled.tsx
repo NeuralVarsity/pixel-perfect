@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/AppShell";
 import { PostsTable } from "@/components/PostsTable";
 
-export const Route = createFileRoute("/scheduled")({
+export const Route = createFileRoute("/_authenticated/scheduled")({
   head: () => ({
     meta: [
       { title: "Scheduled Posts — NeuralVarsity.ai Blog Studio" },

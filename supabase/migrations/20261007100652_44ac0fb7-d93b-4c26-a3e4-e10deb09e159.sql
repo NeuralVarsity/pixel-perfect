@@ -1,0 +1,1 @@
+alter table public.blogs add column author_name text not null default '';

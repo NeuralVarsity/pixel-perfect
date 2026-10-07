@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/AppShell";
 import { usePosts } from "@/lib/blog-store";
 
-export const Route = createFileRoute("/seo")({
+export const Route = createFileRoute("/_authenticated/seo")({
   head: () => ({
     meta: [
       { title: "SEO Management — NeuralVarsity.ai Blog Studio" },
