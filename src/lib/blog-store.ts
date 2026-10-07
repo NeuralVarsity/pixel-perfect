@@ -3,7 +3,8 @@ import c1 from "@/assets/cover-1.jpg";
 import c2 from "@/assets/cover-2.jpg";
 import c3 from "@/assets/cover-3.jpg";
 
-export type Status = "Published" | "Draft" | "Scheduled";
+export type Status = "Published" | "Draft" | "Review" | "Approved" | "Scheduled";
+export const statusList: Status[] = ["Draft", "Review", "Approved", "Scheduled", "Published"];
 export type Post = {
   id: string;
   title: string;
@@ -40,7 +41,7 @@ const titles = [
   "Ethics in AI Education",
   "Diffusion Models, Visually Explained",
 ];
-const statuses: Status[] = ["Published", "Published", "Draft", "Scheduled", "Published", "Draft"];
+const statuses: Status[] = ["Published", "Published", "Draft", "Scheduled", "Published", "Review", "Published", "Approved"];
 
 let posts: Post[] = titles.map((t, i) => ({
   id: String(i + 1),

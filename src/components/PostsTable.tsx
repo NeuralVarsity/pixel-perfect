@@ -45,7 +45,7 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
         <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} className="field max-w-xs" placeholder="Search blogs…" />
         {!fixedStatus && (
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="field w-auto">
-            {["All", "Published", "Draft", "Scheduled"].map((s) => <option key={s}>{s}</option>)}
+            {["All", "Draft", "Review", "Approved", "Scheduled", "Published"].map((s) => <option key={s}>{s}</option>)}
           </select>
         )}
         <select value={cat} onChange={(e) => setCat(e.target.value)} className="field w-auto">
