@@ -40,7 +40,8 @@ function Page() {
     const onHide = () => { if (document.visibilityState === "hidden") send(); };
     document.addEventListener("visibilitychange", onHide);
     window.addEventListener("pagehide", send);
-    return () => { document.removeEventListener("visibilitychange", onHide); window.removeEventListener("pagehide", send); send(); };
+    const timer = setTimeout(send, 15000);
+    return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", onHide); window.removeEventListener("pagehide", send); send(); };
   }, [post.id]);
   return <div className="px-4 py-16"><ArticleView a={post} /></div>;
 }

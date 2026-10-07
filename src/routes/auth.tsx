@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useHydrated } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -28,14 +28,16 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
+  const hydrated = useHydrated();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        await supabase.from("activity_logs").insert({ actor_id: data.user.id, action: "User login", entity: "user", details: data.user.email ?? "" });
         if (remember) localStorage.removeItem("nv-forget");
         else { localStorage.setItem("nv-forget", "1"); sessionStorage.setItem("nv-session", "1"); }
         nav({ to: "/dashboard" });
@@ -74,7 +76,7 @@ function AuthPage() {
             ))}
           </div>
         )}
-        <form onSubmit={submit} className="mt-6 space-y-4">
+        <form method="post" onSubmit={submit} className="mt-6 space-y-4">
           {mode === "signup" && <Field label="Full name"><input className="field" required value={name} onChange={(e) => setName(e.target.value)} /></Field>}
           <Field label="Email"><input type="email" className="field" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
           {mode !== "forgot" && <Field label="Password"><input type="password" className="field" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} /></Field>}
@@ -84,7 +86,7 @@ function AuthPage() {
               <button type="button" onClick={() => setMode("forgot")} className="text-primary">Forgot password?</button>
             </div>
           )}
-          <button className="btn-primary w-full justify-center py-2.5" disabled={busy}>
+          <button className="btn-primary w-full justify-center py-2.5" disabled={busy || !hydrated}>
             {busy && <Loader2 className="size-4 animate-spin" />}
             {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
           </button>
