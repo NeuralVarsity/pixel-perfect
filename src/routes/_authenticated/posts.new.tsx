@@ -35,7 +35,7 @@ function EditorPage() {
   return <Editor key={id ?? "new"} existing={existing} />;
 }
 
-function Editor({ existing }: { existing?: Post }) {
+function Editor({ existing }: { existing: Post | undefined }) {
   const nav = useNavigate();
   const cats = useCategories();
   const me = useMe();
