@@ -76,7 +76,8 @@ function AuthPage() {
             ))}
           </div>
         )}
-        <form method="post" onSubmit={submit} className="mt-6 space-y-4">
+        <form method="post" onSubmit={submit} className="mt-6">
+          <fieldset disabled={!hydrated} className="space-y-4">
           {mode === "signup" && <Field label="Full name"><input className="field" required value={name} onChange={(e) => setName(e.target.value)} /></Field>}
           <Field label="Email"><input type="email" className="field" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
           {mode !== "forgot" && <Field label="Password"><input type="password" className="field" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} /></Field>}
@@ -91,6 +92,7 @@ function AuthPage() {
             {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
           </button>
           {mode === "forgot" && <button type="button" onClick={() => setMode("signin")} className="w-full text-sm text-muted-foreground">Back to sign in</button>}
+          </fieldset>
         </form>
       </div>
     </div>
