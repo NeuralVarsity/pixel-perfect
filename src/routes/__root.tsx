@@ -10,7 +10,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -101,7 +101,11 @@ function RootComponent() {
       if (event === "SIGNED_OUT") return;
       queryClient.invalidateQueries();
     });
-    return () => data.subscription.unsubscribe();
+    const offline = () => toast.warning("You're offline. Changes will retry when you reconnect.", { id: "net" });
+    const online = () => { toast.success("Back online.", { id: "net" }); queryClient.invalidateQueries(); };
+    window.addEventListener("offline", offline);
+    window.addEventListener("online", online);
+    return () => { data.subscription.unsubscribe(); window.removeEventListener("offline", offline); window.removeEventListener("online", online); };
   }, [router, queryClient]);
 
   return (
