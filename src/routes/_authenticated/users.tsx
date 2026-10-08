@@ -59,7 +59,7 @@ function Page() {
                 </select>
               )}
               {!locked && (
-                <button type="button" className="btn-ghost text-sm" onClick={() => setActive(p.id, p.roles, inactive)}>{inactive ? "Reactivate" : "Deactivate"}</button>
+                <button type="button" className="btn text-sm" onClick={() => setActive(p.id, p.roles, inactive)}>{inactive ? "Reactivate" : "Deactivate"}</button>
               )}
             </div>
           );

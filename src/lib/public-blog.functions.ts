@@ -35,5 +35,7 @@ export const getPublishedBlog = createServerFn({ method: "GET" })
       author: b.author_name, date: (b.published_at ?? "").slice(0, 10), blocks: JSON.parse(JSON.stringify(b.blocks ?? [])),
       metaTitle: b.meta_title ?? b.title, metaDescription: b.meta_description ?? "", readMinutes: Math.max(1, Math.round(b.word_count / 220)),
       category: (b.category as { name: string } | null)?.name ?? "",
+      shareImage: b.cover_url ? `${origin}/api/public/cover/${b.id}` : null,
+      origin,
     };
   });

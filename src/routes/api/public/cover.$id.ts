@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/public/cover/$id")({
           if (b.cover_url.startsWith("https://")) return Response.redirect(b.cover_url, 302);
           return new Response("Not found", { status: 404 });
         }
-        const { data: file, error } = await supabaseAdmin.storage.from(m[1]).download(decodeURIComponent(m[2]));
+        const { data: file, error } = await supabaseAdmin.storage.from(m[1]!).download(decodeURIComponent(m[2]!));
         if (error || !file) return new Response("Not found", { status: 404 });
         return new Response(file, {
           headers: { "Content-Type": file.type || "image/jpeg", "Cache-Control": "public, max-age=86400, s-maxage=604800" },
