@@ -43,7 +43,7 @@ function Page() {
         <input className="field max-w-xs" placeholder="New tag" value={name} onChange={(e) => setName(e.target.value)} />
         <button className="btn-primary">Add tag</button>
       </form>
-      {tags.length === 0 ? <EmptyState title="No tags yet">Tags you add here or in the editor appear here.</EmptyState> : (
+      {tags.length === 0 ? <EmptyState title="No tags yet">Add tags above or in the editor’s Publishing panel to help readers find related posts.</EmptyState> : (
         <div className="glass flex flex-wrap gap-3 rounded-2xl p-6">
           {tags.map((t) => (
             <span key={t.id} className="group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:border-primary">

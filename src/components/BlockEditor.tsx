@@ -108,9 +108,9 @@ export function BlockEditor({ blocks, setBlocks }: { blocks: Block[]; setBlocks:
   const render = (b: Block) => {
     const common = { value: b.text, onChange: onText(b), onKeyDown: textKeys(b), autoFocus: focus === b.id };
     switch (b.type) {
-      case "h2": return <AutoText {...common} placeholder="Heading" className="font-display text-2xl font-bold" />;
-      case "h3": return <AutoText {...common} placeholder="Subheading" className="font-display text-xl font-semibold" />;
-      case "quote": return <div className="border-l-4 border-primary pl-4"><AutoText {...common} placeholder="Quote…" className="font-display text-xl italic" /></div>;
+      case "h2": return <AutoText {...common} placeholder="Heading" className="font-display pt-6 text-[1.75rem] font-bold leading-tight tracking-tight" />;
+      case "h3": return <AutoText {...common} placeholder="Subheading" className="font-display pt-3 text-[1.35rem] font-semibold leading-snug" />;
+      case "quote": return <div className="my-2 border-l-4 border-primary pl-5"><AutoText {...common} placeholder="Quote…" className="font-display text-xl italic leading-relaxed" /></div>;
       case "callout": return <div className="flex gap-3 rounded-xl bg-primary/10 p-4"><Info className="mt-1 size-5 shrink-0 text-primary" /><AutoText {...common} placeholder="Callout note…" /></div>;
       case "cta": return <div className="bg-brand rounded-xl p-5 text-accent-foreground"><AutoText {...common} placeholder="Ready to start learning AI? Join NeuralVarsity…" className="font-display text-lg font-bold placeholder:text-accent-foreground/60" /></div>;
       case "button": return <div className="flex flex-wrap items-center gap-2"><span className="btn-primary"><AutoText {...common} placeholder="Button label" className="w-40 font-bold placeholder:text-accent-foreground/60" /></span><input className="field max-w-xs" placeholder="https://link" value={b.extra ?? ""} onChange={(e) => update(b.id, { extra: e.target.value })} /></div>;
@@ -143,12 +143,12 @@ export function BlockEditor({ blocks, setBlocks }: { blocks: Block[]; setBlocks:
               : b.text && b.type === "embed" ? <a href={b.text} target="_blank" rel="noreferrer" className="block rounded-xl border p-4 text-sm text-primary">{b.text}</a> : null}
           </div>);
       }
-      default: return <AutoText {...common} placeholder="Type '/' for commands, or start writing…" className="text-[17px] leading-8" />;
+      default: return <AutoText {...common} placeholder="Type '/' for commands, or start writing…" className="text-[18px] leading-[1.85] text-foreground/90" />;
     }
   };
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {blocks.map((b) => (
         <div key={b.id} draggable={dragId === b.id} onDragOver={(e) => { e.preventDefault(); setOverId(b.id); }} onDrop={() => onDrop(b.id)} onDragEnd={() => { setDragId(null); setOverId(null); }}
           className={cn("group relative -ml-14 flex gap-1 rounded-lg py-1 pl-14 transition-colors", overId === b.id && dragId && "bg-primary/5", dragId === b.id && "opacity-40")}>

@@ -169,7 +169,7 @@ function Editor({ existing }: { existing: Post | undefined }) {
       </div>
 
       <div className={cn("grid gap-6", aiOpen ? "xl:grid-cols-[1fr_300px_360px] lg:grid-cols-[1fr_300px]" : "lg:grid-cols-[1fr_300px]")}>
-        <article className="mx-auto w-full max-w-3xl pl-14">
+        <article className="mx-auto w-full max-w-[46rem] pl-10 md:pl-14">
           <textarea value={f.title} onChange={(e) => set("title", e.target.value)} rows={1} placeholder="Untitled story"
             className="w-full resize-none bg-transparent font-display text-4xl font-bold leading-tight outline-none placeholder:text-muted-foreground/40 md:text-5xl" />
           <div className="mb-8 mt-2 text-xs text-muted-foreground">neuralvarsity.ai/blog/<input value={f.slug} onChange={(e) => set("slug", slugify(e.target.value))} className="bg-transparent text-primary outline-none" placeholder="slug" /></div>

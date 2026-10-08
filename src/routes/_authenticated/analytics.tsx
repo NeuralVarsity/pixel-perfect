@@ -36,7 +36,7 @@ function Page() {
   return (
     <>
       <PageHeader title="Analytics" subtitle={`${views.length.toLocaleString()} views · ${unique.toLocaleString()} unique visitors (last 120 days)`} />
-      {views.length === 0 ? <EmptyState title="No reader data yet">Views are recorded automatically when people read your published posts.</EmptyState> : (
+      {views.length === 0 ? <EmptyState title="No reader data yet">Publish a post and share it — views, reading time and referrers will appear here automatically.</EmptyState> : (
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="glass rounded-2xl p-5">
             <h2 className="font-semibold">Views by category</h2>
