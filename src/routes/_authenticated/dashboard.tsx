@@ -92,7 +92,7 @@ function Dashboard() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         {groups.map((g) => (
-          <div key={g.t} className="glass rounded-2xl p-5">
+          <div key={g.t} className="glass card-hover rounded-2xl p-5">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{g.t} metrics</div>
             <div className="mt-3 grid grid-cols-2 gap-4">
               {g.items.map(([l, v]) => <div key={l}><div className="text-xs text-muted-foreground">{l}</div><div className="font-display text-xl font-bold">{v}</div></div>)}
