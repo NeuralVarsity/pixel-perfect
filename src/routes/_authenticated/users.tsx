@@ -31,19 +31,36 @@ function Page() {
     if (error) toast.error(error.message); else { toast.success("Role updated"); invalidate("profiles", "me"); }
   };
 
+  // Soft delete: posts, media, analytics and activity stay; access is removed.
+  const setActive = async (userId: string, current: Role[], active: boolean) => {
+    if (!active && !confirm("Deactivate this user? Their posts and media stay, but they lose all access.")) return;
+    const { error } = await supabase.from("profiles").update({ deactivated_at: active ? null : new Date().toISOString() }).eq("id", userId);
+    if (error) { toast.error(error.message); return; }
+    const res = active
+      ? await supabase.from("user_roles").insert({ user_id: userId, role: "author" })
+      : current.length ? await supabase.from("user_roles").delete().eq("user_id", userId) : { error: null };
+    if (res.error) toast.error(res.error.message); else { toast.success(active ? "User reactivated as Author" : "User deactivated"); invalidate("profiles"); }
+  };
+
   return (
     <>
       <PageHeader title="Users & Roles" subtitle={canManage ? "Change what each person can do." : "Only admins can change roles."} />
       <div className="glass divide-y rounded-2xl">
         {people.map((p) => {
           const current = p.roles[0] ?? "author";
+          const inactive = !!p.deactivated_at;
           const locked = !canManage || p.id === me?.id || (!isSuper && current === "super_admin");
           return (
             <div key={p.id} className="flex flex-wrap items-center gap-4 p-4">
-              <div className="min-w-0 flex-1"><div className="font-medium">{p.full_name || p.email}</div><div className="text-xs text-muted-foreground">{p.email}</div></div>
-              <select className="field w-44" value={current} disabled={locked} onChange={(e) => setRole(p.id, p.roles, e.target.value as Role)}>
-                {roles.filter((r) => isSuper || r !== "super_admin" || current === "super_admin").map((r) => <option key={r} value={r}>{roleLabel[r]}</option>)}
-              </select>
+              <div className="min-w-0 flex-1"><div className="font-medium">{p.full_name || p.email}{inactive && <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Inactive</span>}</div><div className="text-xs text-muted-foreground">{p.email}</div></div>
+              {!inactive && (
+                <select aria-label={`Role for ${p.full_name || p.email}`} className="field w-44" value={current} disabled={locked} onChange={(e) => setRole(p.id, p.roles, e.target.value as Role)}>
+                  {roles.filter((r) => isSuper || r !== "super_admin" || current === "super_admin").map((r) => <option key={r} value={r}>{roleLabel[r]}</option>)}
+                </select>
+              )}
+              {!locked && (
+                <button type="button" className="btn-ghost text-sm" onClick={() => setActive(p.id, p.roles, inactive)}>{inactive ? "Reactivate" : "Deactivate"}</button>
+              )}
             </div>
           );
         })}

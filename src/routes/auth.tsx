@@ -37,6 +37,11 @@ function AuthPage() {
       if (mode === "signin") {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        const { data: prof } = await supabase.from("profiles").select("deactivated_at").eq("id", data.user.id).maybeSingle();
+        if (prof?.deactivated_at) {
+          await supabase.auth.signOut();
+          throw new Error("This account has been deactivated. Please contact an admin.");
+        }
         await supabase.from("activity_logs").insert({ actor_id: data.user.id, action: "User login", entity: "user", details: data.user.email ?? "" });
         if (remember) localStorage.removeItem("nv-forget");
         else { localStorage.setItem("nv-forget", "1"); sessionStorage.setItem("nv-session", "1"); }
