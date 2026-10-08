@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated/activity'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedAuthorsRouteImport } from './routes/_authenticated/authors'
@@ -30,6 +31,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts.index'
 import { Route as AuthenticatedPostsNewRouteImport } from './routes/_authenticated/posts.new'
 import { Route as AuthenticatedPreviewIdRouteImport } from './routes/_authenticated/preview.$id'
+import { Route as ApiPublicCoverIdRouteImport } from './routes/api/public/cover.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,6 +50,11 @@ const AuthRoute = AuthRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedActivityRoute = AuthenticatedActivityRouteImport.update({
@@ -135,11 +142,17 @@ const AuthenticatedPreviewIdRoute = AuthenticatedPreviewIdRouteImport.update({
   path: '/preview/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicCoverIdRoute = ApiPublicCoverIdRouteImport.update({
+  id: '/api/public/cover/$id',
+  path: '/api/public/cover/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/activity': typeof AuthenticatedActivityRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/authors': typeof AuthenticatedAuthorsRoute
@@ -157,11 +170,13 @@ export interface FileRoutesByFullPath {
   '/posts/new': typeof AuthenticatedPostsNewRoute
   '/preview/$id': typeof AuthenticatedPreviewIdRoute
   '/posts/': typeof AuthenticatedPostsIndexRoute
+  '/api/public/cover/$id': typeof ApiPublicCoverIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/activity': typeof AuthenticatedActivityRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
   '/authors': typeof AuthenticatedAuthorsRoute
@@ -179,6 +194,7 @@ export interface FileRoutesByTo {
   '/posts/new': typeof AuthenticatedPostsNewRoute
   '/preview/$id': typeof AuthenticatedPreviewIdRoute
   '/posts': typeof AuthenticatedPostsIndexRoute
+  '/api/public/cover/$id': typeof ApiPublicCoverIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +202,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/authors': typeof AuthenticatedAuthorsRoute
@@ -203,6 +220,7 @@ export interface FileRoutesById {
   '/_authenticated/posts/new': typeof AuthenticatedPostsNewRoute
   '/_authenticated/preview/$id': typeof AuthenticatedPreviewIdRoute
   '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
+  '/api/public/cover/$id': typeof ApiPublicCoverIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,6 +228,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/activity'
     | '/analytics'
     | '/authors'
@@ -227,11 +246,13 @@ export interface FileRouteTypes {
     | '/posts/new'
     | '/preview/$id'
     | '/posts/'
+    | '/api/public/cover/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/activity'
     | '/analytics'
     | '/authors'
@@ -249,12 +270,14 @@ export interface FileRouteTypes {
     | '/posts/new'
     | '/preview/$id'
     | '/posts'
+    | '/api/public/cover/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/_authenticated/activity'
     | '/_authenticated/analytics'
     | '/_authenticated/authors'
@@ -272,6 +295,7 @@ export interface FileRouteTypes {
     | '/_authenticated/posts/new'
     | '/_authenticated/preview/$id'
     | '/_authenticated/posts/'
+    | '/api/public/cover/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -279,7 +303,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  ApiPublicCoverIdRoute: typeof ApiPublicCoverIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -310,6 +336,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/activity': {
@@ -431,6 +464,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPreviewIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/cover/$id': {
+      id: '/api/public/cover/$id'
+      path: '/api/public/cover/$id'
+      fullPath: '/api/public/cover/$id'
+      preLoaderRoute: typeof ApiPublicCoverIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -480,7 +520,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogSlugRoute: BlogSlugRoute,
+  ApiPublicCoverIdRoute: ApiPublicCoverIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
