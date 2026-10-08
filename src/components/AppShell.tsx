@@ -210,8 +210,19 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   );
 }
 
-export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
-  return <div className="glass rounded-2xl p-12 text-center"><div className="font-semibold">{title}</div><div className="mt-1 text-sm text-muted-foreground">{children}</div></div>;
+export function EmptyState({ title, children, icon }: { title: string; children?: ReactNode; icon?: ReactNode }) {
+  return (
+    <div className="glass flex flex-col items-center rounded-2xl px-6 py-14 text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="relative mb-5 grid size-16 place-items-center">
+        <span className="absolute inset-0 rounded-2xl bg-primary/10 blur-xl" />
+        <span className="relative grid size-16 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary [&_svg]:size-7">
+          {icon ?? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /></svg>}
+        </span>
+      </div>
+      <div className="font-display text-lg font-semibold">{title}</div>
+      <div className="mt-1.5 max-w-sm text-sm leading-6 text-muted-foreground">{children}</div>
+    </div>
+  );
 }
 
 export function StatusBadge({ status }: { status: string }) {

@@ -92,7 +92,7 @@ function Dashboard() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         {groups.map((g) => (
-          <div key={g.t} className="glass rounded-2xl p-5">
+          <div key={g.t} className="glass card-hover rounded-2xl p-5">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{g.t} metrics</div>
             <div className="mt-3 grid grid-cols-2 gap-4">
               {g.items.map(([l, v]) => <div key={l}><div className="text-xs text-muted-foreground">{l}</div><div className="font-display text-xl font-bold">{v}</div></div>)}
@@ -144,7 +144,7 @@ function Dashboard() {
 
       <div className="glass mt-6 rounded-2xl p-5">
         <div className="flex items-center justify-between"><h2 className="font-semibold">Recent posts</h2><Link to="/posts" className="text-sm text-primary">View all</Link></div>
-        {posts.length === 0 ? <p className="py-6 text-sm text-muted-foreground">No posts yet.</p> : (
+        {posts.length === 0 ? <p className="py-8 text-center text-sm text-muted-foreground">No posts yet — your latest stories will show up here.</p> : (
           <ul className="mt-3 divide-y">
             {posts.slice(0, 5).map((p) => (
               <li key={p.id}>

@@ -51,7 +51,7 @@ function Page() {
           <button className="btn-primary"><Plus className="size-4" />Add</button>
         </form>
       )}
-      {cats.length === 0 ? <EmptyState title="No categories yet">{canEdit ? "Add your first one above." : "Ask an editor to create some."}</EmptyState> : (
+      {cats.length === 0 ? <EmptyState title="No categories yet" icon={<FolderTree />}>{canEdit ? "Add your first one above." : "Ask an editor to create some."}</EmptyState> : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {cats.map((c) => (
             <div key={c.id} className="glass group rounded-2xl p-5 transition-transform hover:-translate-y-0.5">

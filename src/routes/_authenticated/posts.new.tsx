@@ -169,7 +169,7 @@ function Editor({ existing }: { existing: Post | undefined }) {
       </div>
 
       <div className={cn("grid gap-6", aiOpen ? "xl:grid-cols-[1fr_300px_360px] lg:grid-cols-[1fr_300px]" : "lg:grid-cols-[1fr_300px]")}>
-        <article className="mx-auto w-full max-w-3xl pl-14">
+        <article className="mx-auto w-full max-w-[46rem] pl-10 md:pl-14">
           <textarea value={f.title} onChange={(e) => set("title", e.target.value)} rows={1} placeholder="Untitled story"
             className="w-full resize-none bg-transparent font-display text-4xl font-bold leading-tight outline-none placeholder:text-muted-foreground/40 md:text-5xl" />
           <div className="mb-8 mt-2 text-xs text-muted-foreground">neuralvarsity.ai/blog/<input value={f.slug} onChange={(e) => set("slug", slugify(e.target.value))} className="bg-transparent text-primary outline-none" placeholder="slug" /></div>
@@ -202,10 +202,28 @@ function Editor({ existing }: { existing: Post | undefined }) {
             <Field label="Publish later (optional)"><input type="datetime-local" className="field" value={f.schedule} onChange={(e) => set("schedule", e.target.value)} /></Field>
           </div>
           <div className="glass rounded-2xl p-5">
-            <div className="flex items-center justify-between"><h2 className="font-semibold">SEO score</h2><span className="text-brand font-display text-2xl font-bold">{score}</span></div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted"><div className="bg-brand h-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
-            <ul className="mt-4 space-y-2 text-sm">
-              {checks.map((c) => <li key={c.l} className={cn("flex items-center gap-2", c.ok ? "text-foreground" : "text-muted-foreground")}><Check className={cn("size-4", c.ok ? "text-success" : "opacity-30")} />{c.l}</li>)}
+            <h2 className="font-semibold">SEO score</h2>
+            <div className="mt-4 flex items-center gap-5">
+              <div className="relative size-24 shrink-0" role="img" aria-label={`SEO score ${score} out of 100`}>
+                <svg viewBox="0 0 100 100" className="size-full -rotate-90">
+                  <defs><linearGradient id="seo-ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="var(--color-primary)" /><stop offset="100%" stopColor="var(--color-accent)" /></linearGradient></defs>
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="var(--color-muted)" strokeWidth="9" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="url(#seo-ring)" strokeWidth="9" strokeLinecap="round"
+                    strokeDasharray={2 * Math.PI * 42} strokeDashoffset={2 * Math.PI * 42 * (1 - score / 100)} className="transition-[stroke-dashoffset] duration-700 ease-out" />
+                </svg>
+                <div className="absolute inset-0 grid place-items-center text-center"><div><div className="font-display text-2xl font-bold leading-none">{score}</div><div className="text-[10px] uppercase tracking-wider text-muted-foreground">/ 100</div></div></div>
+              </div>
+              <div className="min-w-0">
+                <div className={cn("text-sm font-semibold", score >= 80 ? "text-success" : score >= 50 ? "text-accent" : "text-destructive")}>{score >= 80 ? "Great" : score >= 50 ? "Needs work" : "Poor"}</div>
+                <div className="text-xs text-muted-foreground">{checks.filter((c) => c.ok).length} of {checks.length} checks passed</div>
+              </div>
+            </div>
+            <ul className="mt-5 space-y-1.5 text-sm">
+              {checks.map((c) => (
+                <li key={c.l} className={cn("flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors", c.ok ? "text-foreground" : "text-muted-foreground hover:bg-muted/50")}>
+                  <span className={cn("grid size-5 shrink-0 place-items-center rounded-full transition-colors", c.ok ? "bg-success/15 text-success" : "border border-border")}>{c.ok && <Check className="size-3" />}</span>{c.l}
+                </li>
+              ))}
             </ul>
           </div>
         </aside>

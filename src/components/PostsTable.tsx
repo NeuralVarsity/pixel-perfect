@@ -124,7 +124,18 @@ export function PostsTable({ fixedStatus }: { fixedStatus?: Status }) {
                 </td>
               </tr>
             ))}
-            {view.length === 0 && <tr><td colSpan={10} className="py-16 text-center text-muted-foreground">{isLoading ? "Loading…" : "No posts found."} <Link to="/posts/new" className="text-primary underline">Write one</Link></td></tr>}
+            {view.length === 0 && (
+              <tr><td colSpan={10} className="py-16 text-center">
+                {isLoading ? <span className="text-muted-foreground">Loading…</span> : (
+                  <div className="flex flex-col items-center">
+                    <span className="mb-4 grid size-14 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary"><Pencil className="size-6" /></span>
+                    <div className="font-display text-lg font-semibold">No posts here yet</div>
+                    <p className="mt-1 max-w-sm text-sm text-muted-foreground">Try clearing your filters, or start a new story — drafts save automatically.</p>
+                    <Link to="/posts/new" className="btn-primary mt-5">Write a post</Link>
+                  </div>
+                )}
+              </td></tr>
+            )}
           </tbody>
         </table>
       </div>
