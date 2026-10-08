@@ -18,8 +18,15 @@ export const Route = createFileRoute("/blog/$slug")({
       { property: "og:title", content: loaderData.metaTitle },
       { property: "og:description", content: loaderData.metaDescription },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: `/blog/${loaderData.slug}` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: loaderData.metaTitle },
+      { name: "twitter:description", content: loaderData.metaDescription },
+      ...(loaderData.cover?.startsWith("https://")
+        ? [{ property: "og:image", content: loaderData.cover }, { name: "twitter:image", content: loaderData.cover }]
+        : []),
     ];
-    return { meta };
+    return { meta, links: [{ rel: "canonical", href: `/blog/${loaderData.slug}` }] };
   },
   notFoundComponent: () => <div className="grid min-h-screen place-items-center text-muted-foreground">This article isn't published.</div>,
   errorComponent: () => <div className="grid min-h-screen place-items-center text-muted-foreground">This article couldn't load.</div>,
