@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/nv-logo.png.asset.json";
 import { cn } from "@/lib/utils";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -52,6 +53,7 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/dashboard`, data: { full_name: name } },
         });
         if (error) throw error;
+        if (data.user && data.user.identities?.length === 0) throw new Error("This email already has an account. Sign in instead.");
         if (data.session) nav({ to: "/dashboard" });
         else { toast.success("Check your email to confirm your account."); setMode("signin"); }
       } else {
@@ -61,7 +63,11 @@ function AuthPage() {
         setMode("signin");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      if (/invalid login credentials/i.test(msg)) toast.error("Wrong email or password. Try again or use “Forgot password?”.");
+      else if (/already registered/i.test(msg)) toast.error("This email already has an account. Sign in instead.");
+      else if (/email not confirmed/i.test(msg)) toast.error("Please confirm your email first.");
+      else toast.error(msg);
     }
     setBusy(false);
   };
@@ -85,7 +91,7 @@ function AuthPage() {
           <fieldset disabled={!hydrated} className="space-y-4">
           {mode === "signup" && <Field label="Full name"><input className="field" required value={name} onChange={(e) => setName(e.target.value)} /></Field>}
           <Field label="Email"><input type="email" className="field" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></Field>
-          {mode !== "forgot" && <Field label="Password"><input type="password" className="field" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} /></Field>}
+          {mode !== "forgot" && <Field label="Password"><PasswordInput required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} /></Field>}
           {mode === "signin" && (
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2"><input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />Remember me</label>
