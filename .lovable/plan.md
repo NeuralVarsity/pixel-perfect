@@ -1,21 +1,20 @@
-# Sign-in fixes: password toggle + "can't log in after sign-up"
+# Sign-in fixes: password toggle + instant sign-up for testing
 
 ## What's going on
-Your account (asadiomer24@gmail.com) was created at 06:32 but its confirmation email was never clicked, so it isn't activated yet. Signing up again at 07:20 didn't create a new account or change the password. It only re-sent the confirmation email. Every sign-in since then has been turned away, and the sign-in page only says "Invalid login credentials", which doesn't explain why.
+New accounts have to click a confirmation email before they can sign in. Dummy email addresses never get that email, so the account stays locked. That is why signing in after sign-up keeps failing. Your account (asadiomer24@gmail.com) is in the same state.
 
 ## Changes
-1. **Show/hide password toggle**: an eye icon inside the password box on Sign in, Sign up and the Reset password page.
-2. **Activate your account now**: mark asadiomer24@gmail.com as confirmed so you can sign in straight away. If you've forgotten which password you used, "Forgot password?" will work after this.
-3. **Clearer messages on the sign-in page**:
-   - Unconfirmed account: "Please confirm your email first", with a **Resend confirmation email** button.
-   - Wrong email or password: say so, and point to "Forgot password?".
-   - Signing up with an email that's already registered: "This email already has an account. Sign in or reset your password" (instead of a silent re-send).
-4. After sign-up, show a "Check your inbox" message with a resend button, not just a quick popup.
+1. **Instant sign-up (testing mode)**: turn off the email-confirmation step. A new sign-up is signed in right away and goes straight to the dashboard, even with a made-up email address.
+2. **Unlock existing accounts**: mark every account that is currently waiting for confirmation, including yours, as confirmed so they can sign in now.
+3. **Show/hide password toggle**: an eye icon inside the password box on Sign in, Sign up and the Reset password page.
+4. **Clearer error messages**: "Wrong email or password" (pointing to "Forgot password?"), and "This email already has an account. Sign in instead" when someone signs up twice with the same email.
 
-Email confirmation stays on for new users.
+Note: before real users join, turn email confirmation back on. Otherwise anyone can sign up with an email they don't own. Password reset emails still won't reach dummy addresses.
 
 ## Technical details
-- `src/routes/auth.tsx`: reusable `PasswordInput` with Eye/EyeOff toggle (aria-label, type switch); map `email_not_confirmed` / `invalid_credentials` errors; `supabase.auth.resend({ type: "signup", email })`; detect an existing user from signUp returning `identities.length === 0`.
+- Auth config: `auto_confirm_email: true`, keeping signup enabled and the leaked-password check on.
+- Data fix: set `email_confirmed_at = now()` where it is null in auth.users.
+- `src/routes/auth.tsx`: `PasswordInput` with Eye/EyeOff toggle (aria-label); map `invalid_credentials`; detect an existing user from signUp returning `identities.length === 0`; navigate to /dashboard when `data.session` is returned (already wired).
 - `src/routes/reset-password.tsx`: use the same `PasswordInput`.
-- One-off data fix: set `email_confirmed_at = now()` for that one user.
-- Check with Playwright: toggle works, sign-in succeeds, and the unconfirmed path shows the resend button.
+- Save a memory note that confirmation is off for the testing phase.
+- Check with Playwright: sign up with a dummy email, land on the dashboard, sign out, sign back in, and confirm the toggle works.
