@@ -2,8 +2,8 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  LayoutDashboard, FileText, FolderTree, Tags, Image, Users, Search, BarChart3, PenLine, CalendarClock,
-  CheckCircle2, Settings, ChevronsLeft, Moon, Sun, Bell, Plus, Shield, History, LogOut,
+  LayoutDashboard, FileText, Image, Search, PenLine, CalendarClock,
+  CheckCircle2, Settings, ChevronsLeft, Moon, Sun, Bell, Plus, LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/nv-logo.png.asset.json";
@@ -13,17 +13,10 @@ import { roleLabel, useMe, invalidate } from "@/lib/blog-store";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/posts", label: "Blog Posts", icon: FileText },
-  { to: "/categories", label: "Categories", icon: FolderTree },
-  { to: "/tags", label: "Tags", icon: Tags },
-  { to: "/media", label: "Media Library", icon: Image },
-  { to: "/authors", label: "Authors", icon: Users },
-  { to: "/seo", label: "SEO Management", icon: Search },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/drafts", label: "Drafts", icon: PenLine },
   { to: "/scheduled", label: "Scheduled Posts", icon: CalendarClock },
   { to: "/published", label: "Published Posts", icon: CheckCircle2 },
-  { to: "/activity", label: "Activity Log", icon: History },
-  { to: "/users", label: "Users & Roles", icon: Shield },
+  { to: "/media", label: "Media Library", icon: Image },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
