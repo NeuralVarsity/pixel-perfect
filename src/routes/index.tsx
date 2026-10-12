@@ -36,7 +36,7 @@ function Home() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-background/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
           <Link to="/" className="flex items-center gap-3">
             <img src={logo.url} alt="" className="size-8 rounded-md bg-foreground p-0.5" />
@@ -102,8 +102,8 @@ function Home() {
 
       <section className="border-y border-white/5">
         <div className="mx-auto grid max-w-6xl grid-cols-1 divide-y divide-white/5 px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          <Stat value={String(posts.length)} label="Articles published" />
-          <Stat value={String(topics.length)} label="Topics covered" />
+          <Stat value={String(posts.length)} label={`${posts.length === 1 ? "article" : "articles"} published`} />
+          <Stat value={String(topics.length)} label={`${topics.length === 1 ? "topic" : "topics"} covered`} />
           <Stat value={fmt(posts[0]?.date ?? "")} label="Most recent" />
         </div>
       </section>
